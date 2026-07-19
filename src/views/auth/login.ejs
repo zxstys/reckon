@@ -1,0 +1,27 @@
+<%- include('../partials/shell-start') %>
+      <div class="flex flex-1 flex-col justify-center">
+        <h1 class="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">Welcome back</h1>
+        <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Log in to manage your files.</p>
+
+        <% if (error) { %>
+          <div class="mt-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-500/10 dark:text-red-400"><%= error %></div>
+        <% } %>
+
+        <form action="/login" method="POST" class="mt-6 flex flex-col gap-4">
+          <input type="hidden" name="next" value="<%= next %>" />
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Email</label>
+            <input type="email" name="email" required class="input-field" placeholder="you@example.com" />
+          </div>
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Password</label>
+            <input type="password" name="password" required class="input-field" placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn-primary mt-2 w-full">Log in</button>
+        </form>
+
+        <p class="mt-6 text-sm text-neutral-500 dark:text-neutral-400">
+          Don't have an account? <a href="/register" class="font-medium text-neutral-900 underline dark:text-white">Sign up</a>
+        </p>
+      </div>
+<%- include('../partials/shell-end') %>

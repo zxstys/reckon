@@ -1,0 +1,10 @@
+node_modules
+dist
+data
+storage/local/*
+!storage/local/.gitkeep
+uploads_tmp/*
+!uploads_tmp/.gitkeep
+.env
+public/css/output.css
+*.log

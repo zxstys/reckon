@@ -1,0 +1,27 @@
+<%- include('partials/shell-start') %>
+      <div class="flex flex-1 flex-col justify-center">
+        <h1 class="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">Download your file</h1>
+        <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">This file is securely hosted by <%= appName %>.</p>
+
+        <div class="card mt-8 overflow-hidden">
+          <div class="flex items-center justify-between border-b border-neutral-200 px-5 py-3.5 dark:border-white/10">
+            <span class="text-sm text-neutral-400 dark:text-neutral-500">Name</span>
+            <span class="max-w-[60%] truncate text-right text-sm font-medium text-neutral-900 dark:text-white"><%= file.original_name %></span>
+          </div>
+          <div class="flex items-center justify-between border-b border-neutral-200 px-5 py-3.5 dark:border-white/10">
+            <span class="text-sm text-neutral-400 dark:text-neutral-500">Size</span>
+            <span class="text-sm font-medium text-neutral-900 dark:text-white"><%= sizeLabel %></span>
+          </div>
+          <div class="flex items-center justify-between border-b border-neutral-200 px-5 py-3.5 dark:border-white/10">
+            <span class="text-sm text-neutral-400 dark:text-neutral-500">Downloads</span>
+            <span class="text-sm font-medium text-neutral-900 dark:text-white"><%= file.download_count %></span>
+          </div>
+          <div class="flex items-center justify-between px-5 py-3.5">
+            <span class="text-sm text-neutral-400 dark:text-neutral-500">Uploaded</span>
+            <span class="text-sm font-medium text-neutral-900 dark:text-white"><%= dateLabel %></span>
+          </div>
+        </div>
+
+        <a href="/f/<%= file.id %>/download" class="btn-primary mt-6 w-full">Download</a>
+      </div>
+<%- include('partials/shell-end') %>

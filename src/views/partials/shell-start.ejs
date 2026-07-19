@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= title %> · <%= locals.appName || 'Reckon' %>
+  </title>
+  <link rel="stylesheet" href="/css/output.css" />
+  <script>
+    (function () {
+      var stored = localStorage.getItem('reckon-theme');
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    })();
+  </script>
+</head>
+
+<body class="bg-neutral-50 text-neutral-900 antialiased dark:bg-neutral-950 dark:text-neutral-100">
+  <div class="flex min-h-screen w-full flex-col md:flex-row">
+    <div class="flex w-full flex-col md:w-[46%] lg:w-[38%]">
+      <header class="flex items-center px-6 py-4 sm:px-10">
+        <a href="/" class="flex items-center gap-2.5">
+          <span class="flex h-8 w-8 items-center justify-center rounded-xl dark:text-white text-black">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
+              <path fill-rule="evenodd"
+                d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z"
+                clip-rule="evenodd" />
+            </svg>
+          </span>
+          <span class="text-base font-semibold tracking-tight">
+            <%= locals.appName || 'Fylo' %>
+          </span>
+        </a>
+        <nav class="ml-auto flex items-center gap-4 text-sm text-neutral-500 dark:text-neutral-400">
+          <% if (locals.user) { %>
+            <% if (user.role==='admin' ) { %>
+              <a href="/admin" class="hover:text-neutral-900 dark:hover:text-white">Admin</a>
+              <% } %>
+                <a href="/dashboard" class="hover:text-neutral-900 dark:hover:text-white">My files</a>
+                <form action="/logout" method="POST">
+                  <button type="submit" class="hover:text-neutral-900 dark:hover:text-white">Log out</button>
+                </form>
+                <% } else { %>
+                  <a href="/login" class="hover:text-neutral-900 dark:hover:text-white">Log in</a>
+                  <a href="/register" class="btn-secondary !px-3 !py-1.5">Sign up</a>
+                  <% } %>
+                    <button id="theme-toggle" type="button" aria-label="Toggle dark mode"
+                      class="ml-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 transition-colors hover:bg-neutral-200 dark:bg-white/10 dark:text-neutral-300 dark:hover:bg-white/15">
+                      <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                        class="hidden h-4 w-4 dark:block">
+                        <path
+                          d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
+                      </svg>
+                      <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                        class="h-4 w-4 dark:hidden">
+                        <path fill-rule="evenodd"
+                          d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+                          clip-rule="evenodd" />
+                      </svg>
+                    </button>
+        </nav>
+      </header>
+      <main class="flex flex-1 flex-col px-6 py-10 sm:px-10">

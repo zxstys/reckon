@@ -1,0 +1,47 @@
+{
+  "name": "fylo",
+  "version": "1.0.0",
+  "description": "Configurable file hosting service with local/S3 storage",
+  "main": "dist/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "concurrently -k -n SERVER,CSS -c blue,magenta \"tsx watch src/server.ts\" \"npm:css:watch\"",
+    "build": "npm run css:build && tsc -p tsconfig.json && npm run copy:views",
+    "copy:views": "mkdir -p dist/views && cp -r src/views/. dist/views/",
+    "start": "node dist/server.js",
+    "css:build": "tailwindcss -i ./src/styles/input.css -o ./public/css/output.css --minify",
+    "css:watch": "tailwindcss -i ./src/styles/input.css -o ./public/css/output.css --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.716.0",
+    "@aws-sdk/lib-storage": "^3.716.0",
+    "@aws-sdk/s3-request-presigner": "^3.716.0",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.7.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.2.0",
+    "multer-s3": "^3.0.1",
+    "nanoid": "^3.3.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/ejs": "^3.1.5",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/multer": "^1.4.12",
+    "@types/multer-s3": "^3.0.3",
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.1.2",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

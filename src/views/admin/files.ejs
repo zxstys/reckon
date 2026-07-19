@@ -1,0 +1,24 @@
+<%- include('../partials/shell-start') %>
+      <div class="flex flex-1 flex-col">
+        <div class="flex items-center justify-between">
+          <h1 class="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">Files</h1>
+          <a href="/admin" class="text-sm text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white">&larr; Overview</a>
+        </div>
+
+        <div class="mt-6 flex flex-col gap-3">
+          <% files.forEach(function(file) { %>
+            <div class="flex items-center justify-between card px-4 py-3">
+              <div class="min-w-0">
+                <a href="/f/<%= file.id %>" class="block truncate text-sm font-medium text-neutral-900 hover:underline dark:text-white"><%= file.original_name %></a>
+                <p class="mt-0.5 text-xs text-neutral-400 dark:text-neutral-500">
+                  <%= file.sizeLabel %> · <%= file.download_count %> downloads · <%= file.dateLabel %> · <span class="uppercase"><%= file.storage_driver %></span>
+                </p>
+              </div>
+              <form action="/admin/files/<%= file.id %>/delete" method="POST">
+                <button type="submit" class="ml-4 shrink-0 text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">Delete</button>
+              </form>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+<%- include('../partials/shell-end') %>
