@@ -12,6 +12,14 @@ import {
 } from "../services/file.service";
 import { formatBytes, formatDate } from "../utils/format";
 
+function wantsJson(req: Request): boolean {
+  return req.xhr || req.headers["x-requested-with"] === "XMLHttpRequest" || (req.headers.accept ?? "").includes("application/json");
+}
+
+function fileUrl(id: string): string {
+  return `${config.appUrl.replace(/\/+$/, "")}/f/${id}`;
+}
+
 export function showLanding(req: Request, res: Response): void {
   res.render("index", {
     title: "Upload a file",
@@ -23,21 +31,23 @@ export function showLanding(req: Request, res: Response): void {
 
 export async function handleUpload(req: Request, res: Response): Promise<void> {
   if (!req.user && !config.allowAnonymousUploads) {
-    res.status(401).render("error", {
-      title: "Sign in required",
-      message: "You need an account to upload files.",
-      user: req.user,
-    });
+    const message = "You need an account to upload files.";
+    if (wantsJson(req)) {
+      res.status(401).json({ error: message });
+      return;
+    }
+    res.status(401).render("error", { title: "Sign in required", message, user: req.user });
     return;
   }
 
   const file = req.file as Express.Multer.File | undefined;
   if (!file) {
-    res.status(400).render("error", {
-      title: "Upload failed",
-      message: "No file was received.",
-      user: req.user,
-    });
+    const message = "No file was received.";
+    if (wantsJson(req)) {
+      res.status(400).json({ error: message });
+      return;
+    }
+    res.status(400).render("error", { title: "Upload failed", message, user: req.user });
     return;
   }
 
@@ -49,6 +59,16 @@ export async function handleUpload(req: Request, res: Response): Promise<void> {
     size: file.size,
     mimeType: file.mimetype || "application/octet-stream",
   });
+
+  if (wantsJson(req)) {
+    res.status(201).json({
+      id: record.id,
+      name: file.originalname,
+      pageUrl: fileUrl(record.id),
+      downloadUrl: `${fileUrl(record.id)}/download`,
+    });
+    return;
+  }
 
   res.redirect(`/f/${record.id}`);
 }
@@ -69,18 +89,22 @@ function isPrivateHostname(hostname: string): boolean {
 }
 
 export async function handleRemoteUpload(req: Request, res: Response): Promise<void> {
+  const fail = (status: number, title: string, message: string) => {
+    if (wantsJson(req)) {
+      res.status(status).json({ error: message });
+      return;
+    }
+    res.status(status).render("error", { title, message, user: req.user });
+  };
+
   if (!req.user && !config.allowAnonymousUploads) {
-    res.status(401).render("error", {
-      title: "Sign in required",
-      message: "You need an account to upload files.",
-      user: req.user,
-    });
+    fail(401, "Sign in required", "You need an account to upload files.");
     return;
   }
 
   const { url } = req.body as { url?: string };
   if (!url) {
-    res.status(400).render("error", { title: "Remote upload failed", message: "A URL is required.", user: req.user });
+    fail(400, "Remote upload failed", "A URL is required.");
     return;
   }
 
@@ -88,24 +112,24 @@ export async function handleRemoteUpload(req: Request, res: Response): Promise<v
   try {
     parsed = new URL(url);
   } catch {
-    res.status(400).render("error", { title: "Remote upload failed", message: "That URL is not valid.", user: req.user });
+    fail(400, "Remote upload failed", "That URL is not valid.");
     return;
   }
 
   if (!["http:", "https:"].includes(parsed.protocol) || isPrivateHostname(parsed.hostname)) {
-    res.status(400).render("error", { title: "Remote upload failed", message: "That URL cannot be fetched.", user: req.user });
+    fail(400, "Remote upload failed", "That URL cannot be fetched.");
     return;
   }
 
   const response = await fetch(parsed.toString());
   if (!response.ok || !response.body) {
-    res.status(400).render("error", { title: "Remote upload failed", message: `The remote server responded with ${response.status}.`, user: req.user });
+    fail(400, "Remote upload failed", `The remote server responded with ${response.status}.`);
     return;
   }
 
   const contentLength = Number(response.headers.get("content-length") ?? 0);
   if (contentLength && contentLength > config.maxUploadSizeBytes) {
-    res.status(400).render("error", { title: "Remote upload failed", message: "The remote file exceeds the upload size limit.", user: req.user });
+    fail(400, "Remote upload failed", "The remote file exceeds the upload size limit.");
     return;
   }
 
@@ -123,6 +147,17 @@ export async function handleRemoteUpload(req: Request, res: Response): Promise<v
     size,
     mimeType,
   });
+
+  if (wantsJson(req)) {
+    res.status(201).json({
+      id: record.id,
+      name: originalName,
+      pageUrl: fileUrl(record.id),
+      downloadUrl: `${fileUrl(record.id)}/download`,
+    });
+    return;
+  }
+
   res.redirect(`/f/${record.id}`);
 }
 
